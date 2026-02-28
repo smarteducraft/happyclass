@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Class</title>
+    <title>Happy Class V3.11</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -97,7 +97,7 @@
                 <div class="flex items-end gap-4 overflow-x-auto custom-scrollbar pb-1">
                     <div>
                         <h2 id="right-title" class="text-5xl font-black text-orange-600 mb-1 text-shadow-lg text-nowrap">Happy Class</h2>
-                        <p id="right-subtitle" class="text-lg font-bold tracking-widest text-slate-500 opacity-70 uppercase">V3.11</p>
+                        <p id="right-subtitle" class="text-lg font-bold tracking-widest text-slate-500 opacity-70 uppercase">Smart Dashboard</p>
                     </div>
                     <!-- 탭 전환 버튼 -->
                     <div class="flex bg-white/30 p-1 rounded-xl backdrop-blur-sm border border-white/40 mb-1 flex-nowrap">
@@ -443,7 +443,6 @@
         function loadMusic(input) {
             const files = Array.from(input.files).filter(f => f.type.startsWith('audio/'));
             if (files.length === 0) return;
-            // 합치기 위해 기존 플레이리스트 유지하고 싶으면 concat 사용, 새로고침이면 대입
             musicPlaylist = files.map(f => ({ url: URL.createObjectURL(f), name: f.name }));
             currentMusicIdx = 0;
             playTrack(0);
@@ -495,14 +494,14 @@
             });
 
             if (config.viewMode === 'album') {
-                titleEl.innerText = "우리 반 앨범"; subtitleEl.innerText = "Class Album";
+                titleEl.innerText = "우리 반 앨범"; subtitleEl.innerText = "Smart Dashboard";
                 if (albumPhotos.length === 0) {
                     container.innerHTML = `<div class="glass p-10 rounded-[3rem] h-full flex flex-col items-center justify-center opacity-50"><i data-lucide="images" class="w-20 h-20 mb-4"></i><p class="text-xl font-bold">환경 설정에서 사진 폴더를 선택하세요</p></div>`;
                 } else {
                     container.innerHTML = `<div class="w-full h-full flex items-center justify-center overflow-hidden"><img id="album-image" src="${albumPhotos[albumIdx]}" class="max-w-full max-h-full object-contain"></div>`;
                 }
             } else if (config.viewMode === 'meal') {
-                titleEl.innerText = "오늘의 급식"; subtitleEl.innerText = "School Meals";
+                titleEl.innerText = "오늘의 급식"; subtitleEl.innerText = "Smart Dashboard";
                 container.innerHTML = `<div class="flex justify-center items-center h-full"><div class="loader"></div></div>`;
                 const data = await getMealData();
                 const formattedDate = `${mealDate.getFullYear()}.${String(mealDate.getMonth()+1).padStart(2,'0')}.${String(mealDate.getDate()).padStart(2,'0')} (${dayNames[mealDate.getDay()]})`;
@@ -522,7 +521,7 @@
                 }
                 mealHtml += `</div>`; container.innerHTML = mealHtml;
             } else if (config.viewMode === 'notice') {
-                titleEl.innerText = "알림장"; subtitleEl.innerText = "Notice Board";
+                titleEl.innerText = "알림장"; subtitleEl.innerText = "Smart Dashboard";
                 const ymdKey = noticeDate.toISOString().split('T')[0];
                 const formattedDate = `${noticeDate.getFullYear()}.${String(noticeDate.getMonth()+1).padStart(2,'0')}.${String(noticeDate.getDate()).padStart(2,'0')} (${dayNames[noticeDate.getDay()]})`;
                 container.innerHTML = `<div class="glass p-8 rounded-[3rem] shadow-xl h-full flex flex-col border-white/50 animate-in fade-in">
@@ -534,6 +533,7 @@
             } else {
                 const type = config.viewMode === 'rules' ? 'rules' : 'announcements';
                 titleEl.innerText = type === 'rules' ? "우리 반 약속" : "공지사항"; 
+                subtitleEl.innerText = "Smart Dashboard";
                 let html = `<div class="space-y-4">`;
                 config[type].forEach((item, idx) => {
                     html += `<div class="glass p-6 rounded-[2rem] flex items-center gap-6 group">
