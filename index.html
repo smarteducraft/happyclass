@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Class (V3.32)</title>
+    <title>Happy Class V3.33</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -354,7 +354,7 @@
         let musicPlaylist = [];
         let currentMusicIdx = 0;
 
-        const saved = localStorage.getItem('happy_class_config_v3_32');
+        const saved = localStorage.getItem('happy_class_config_v3_33');
         if (saved) config = { ...config, ...JSON.parse(saved) };
         if (!config.schedule || config.schedule.length === 0) config.schedule = generateDefaultSchedule('09:00', config.lunchAfter);
 
@@ -458,9 +458,9 @@
                             albumIdx = (albumIdx + 1) % albumPhotos.length;
                             img.src = albumPhotos[albumIdx];
                             img.classList.remove('fade-out');
-                        }, 1000); // 1초간 페이드 아웃 후 이미지 교체
+                        }, 1000); 
                     }
-                }, 5000); // 5초 간격
+                }, 5000); 
             }
         }
         function stopAlbum() { if (albumInterval) clearInterval(albumInterval); }
@@ -692,8 +692,15 @@
             const res = document.getElementById('school-search-results'); res.innerHTML='<div class="text-sm p-3">검색 중...</div>';
             try { 
                 const d = await fetchNEIS('schoolInfo', { ATPT_OFCDC_SC_CODE:r, SCHUL_NM:n });
-                if(d.schoolInfo) res.innerHTML = d.schoolInfo[1].row.map(s => `<button onclick="selectSchool('${s.ATPT_OFCDC_SC_CODE}', '${s.SD_SCHUL_CODE}', '${s.SCHUL_NM}')" class="w-full text-left p-3 border rounded-xl hover:bg-blue-50 text-sm font-bold">${s.SCHUL_NM}</button>`).join('');
-                else res.innerHTML = '<div class="text-sm p-3">결과 없음</div>';
+                if(d.schoolInfo) {
+                    res.innerHTML = d.schoolInfo[1].row.map(s => `
+                        <button onclick="selectSchool('${s.ATPT_OFCDC_SC_CODE}', '${s.SD_SCHUL_CODE}', '${s.SCHUL_NM}')" class="w-full text-left p-3 border rounded-xl hover:bg-blue-50 transition-colors">
+                            <div class="text-sm font-bold text-slate-800">${s.SCHUL_NM}</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">${s.ORG_RDNMA || '주소 정보 없음'}</div>
+                        </button>
+                    `).join('');
+                }
+                else res.innerHTML = '<div class="text-sm p-3 text-slate-800">결과 없음</div>';
             } catch(e){ res.innerHTML = '<div class="text-sm p-3 text-red-500">오류 발생</div>'; }
         }
         function selectSchool(atpt, schul, name) { config.tempSchool = { atptCode:atpt, schulCode:schul, schulNm:name }; document.getElementById('selected-school-info').innerText=`✅ 선택됨: ${name}`; }
@@ -742,7 +749,7 @@
             saveToLocal(); applyBackground(); renderContent(); updateTime(); closeSettings(); showAutoSaveIndicator();
         }
 
-        function saveToLocal() { localStorage.setItem('happy_class_config_v3_32', JSON.stringify(config)); }
+        function saveToLocal() { localStorage.setItem('happy_class_config_v3_33', JSON.stringify(config)); }
         function showAutoSaveIndicator() { const i = document.getElementById('auto-save-indicator'); if(i) { i.style.opacity = '1'; setTimeout(() => { i.style.opacity = '0'; }, 1000); } }
 
         function renderPeriodSelectors() {
