@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Class (V3.31)</title>
+    <title>Happy Class (V3.32)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -12,7 +12,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
         :root {
-            --accent-color: #6366f1; /* 초기 라벤더 블루 액센트 */
+            --accent-color: #6366f1;
         }
         body {
             font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
@@ -52,8 +52,9 @@
             font-weight: 800; 
         }
 
+        /* 앨범 이미지 슬라이드 애니메이션 */
         #album-image {
-            transition: opacity 0.8s ease-in-out;
+            transition: opacity 1s ease-in-out;
             opacity: 1;
         }
         .fade-out { opacity: 0 !important; }
@@ -67,14 +68,11 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* 테마별 강조색 적용 클래스 */
         .dynamic-accent-text { color: var(--accent-color) !important; }
         .dynamic-accent-bg { background-color: var(--accent-color) !important; }
-        .dynamic-accent-ring { ring-color: var(--accent-color) !important; }
         
         .btn-active { color: var(--accent-color) !important; background: rgba(255, 255, 255, 0.4); border-radius: 50%; }
         
-        /* Volume Slider Accent */
         input[type='range']::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -192,7 +190,7 @@
                         <h4 class="font-bold text-lg flex items-center gap-2 text-orange-700"><i data-lucide="play-circle" class="w-5 h-5"></i> 앨범 및 음악 설정</h4>
                         <div class="flex flex-col gap-2">
                             <button onclick="document.getElementById('album-folder-input').click()" class="w-full flex items-center justify-center gap-2 p-2 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-sm hover:bg-orange-100 transition-all">
-                                <i data-lucide="folder-open" class="w-4 h-4"></i> 사진 폴더
+                                <i data-lucide="folder-open" class="w-4 h-4"></i> 사진 폴더(바탕화면 '앨범') 선택
                             </button>
                             <input type="file" id="album-folder-input" webkitdirectory directory multiple class="hidden" onchange="handleAlbumFiles(this)">
                             <div class="flex gap-2">
@@ -229,14 +227,13 @@
                             </div>
                             <input type="color" id="custom-color-input" class="hidden" oninput="handleCustomColor(this.value)">
                         </div>
-                        <p class="text-[10px] text-center text-slate-400 font-bold">배경에 맞춰 UI 색상(요일, 메뉴, 아이콘 등)이 자동으로 변경됩니다.</p>
                     </div>
                 </div>
 
                 <!-- 급식 학교 설정 -->
                 <div class="space-y-3 bg-blue-50 p-5 rounded-2xl border border-blue-100">
                     <h4 class="font-bold text-lg flex items-center gap-2 text-blue-700"><i data-lucide="utensils" class="w-5 h-5"></i> 우리 학교 급식 설정</h4>
-                    <div class="flex gap-3">
+                    <div class="flex gap-3 text-slate-800">
                         <select id="region-select" class="p-3 border rounded-xl font-bold text-base focus:ring-2 focus:ring-blue-400 outline-none w-32 bg-white">
                             <option value="B10">서울</option><option value="C10">부산</option><option value="D10">대구</option>
                             <option value="E10">인천</option><option value="F10">광주</option><option value="G10">대전</option>
@@ -246,7 +243,7 @@
                             <option value="S10">경남</option><option value="T10">제주</option>
                         </select>
                         <div class="relative flex-1">
-                            <input type="text" id="school-name-search" placeholder="학교 이름을 입력하세요" class="w-full p-3 border rounded-xl font-bold text-base focus:ring-2 focus:ring-blue-400 outline-none bg-white">
+                            <input type="text" id="school-name-search" placeholder="학교 이름을 입력하세요" class="w-full p-3 border rounded-xl font-bold text-base focus:ring-2 focus:ring-blue-400 outline-none bg-white text-slate-800">
                             <button onclick="searchSchoolInSettings()" class="absolute right-2 top-2 bg-blue-600 text-white px-4 py-1.5 rounded-lg font-bold text-sm">검색</button>
                         </div>
                     </div>
@@ -267,25 +264,24 @@
                 <div class="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                     <h4 class="font-bold text-xl flex items-center gap-2 text-slate-700"><i data-lucide="layout-list" class="w-6 h-6"></i> 요일별 수업 시수</h4>
                     <div class="grid grid-cols-5 gap-4">
-                        <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">월요일</span><select id="period-mon" class="w-full p-2 border rounded-xl text-lg font-black text-center bg-white"></select></div>
-                        <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">화요일</span><select id="period-tue" class="w-full p-2 border rounded-xl text-lg font-black text-center bg-white"></select></div>
+                        <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">월요일</span><select id="period-mon" class="w-full p-2 border rounded-xl text-lg font-black text-center bg-white text-slate-800"></select></div>
+                        <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">화요일</span><select id="period-tue" class="w-full p-2 border rounded-xl text-lg font-black text-center bg-white text-slate-800"></select></div>
                         <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">수요일</span><select id="period-wed" class="w-full p-2 border rounded-xl text-lg font-black text-center dynamic-accent-text bg-white"></select></div>
-                        <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">목요일</span><select id="period-thu" class="w-full p-2 border rounded-xl text-lg font-black text-center bg-white"></select></div>
-                        <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">금요일</span><select id="period-fri" class="w-full p-2 border rounded-xl text-lg font-black text-center bg-white"></select></div>
+                        <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">목요일</span><select id="period-thu" class="w-full p-2 border rounded-xl text-lg font-black text-center bg-white text-slate-800"></select></div>
+                        <div class="text-center space-y-1"><span class="text-sm font-bold text-slate-400">금요일</span><select id="period-fri" class="w-full p-2 border rounded-xl text-lg font-black text-center bg-white text-slate-800"></select></div>
                     </div>
                 </div>
 
-                <!-- 시정표 기준 설정 -->
                 <div class="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                     <h4 class="font-bold text-xl flex items-center gap-2 text-slate-700"><i data-lucide="clock" class="w-6 h-6"></i> 시정표 설정 기준</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-bold text-slate-500 ml-1">1교시 시작 시간</label>
-                            <input type="time" id="start-time-trigger" class="w-full p-3 border rounded-xl text-xl font-black outline-none focus:ring-2 focus:ring-orange-400 bg-white" onchange="autoCalculateSchedule(this.value, document.getElementById('lunch-after-input').value)">
+                            <input type="time" id="start-time-trigger" class="w-full p-3 border rounded-xl text-xl font-black outline-none focus:ring-2 focus:ring-orange-400 bg-white text-slate-800" onchange="autoCalculateSchedule(this.value, document.getElementById('lunch-after-input').value)">
                         </div>
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-bold text-slate-500 ml-1">점심시간 위치</label>
-                            <select id="lunch-after-input" class="w-full p-3 border rounded-xl text-xl font-black outline-none focus:ring-2 focus:ring-blue-400 bg-white" onchange="autoCalculateSchedule(document.getElementById('start-time-trigger').value, this.value)">
+                            <select id="lunch-after-input" class="w-full p-3 border rounded-xl text-xl font-black outline-none focus:ring-2 focus:ring-blue-400 bg-white text-slate-800" onchange="autoCalculateSchedule(document.getElementById('start-time-trigger').value, this.value)">
                                 <option value="1">1교시 후 점심</option><option value="2">2교시 후 점심</option>
                                 <option value="3">3교시 후 점심</option><option value="4" selected>4교시 후 점심</option>
                             </select>
@@ -295,7 +291,7 @@
 
                 <div class="space-y-4">
                     <h4 class="font-bold text-xl text-slate-700 ml-1">시정표 내용 확인 및 수정</h4>
-                    <div id="schedule-editor" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                    <div id="schedule-editor" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-800"></div>
                 </div>
             </div>
 
@@ -343,20 +339,11 @@
             'custom': '' 
         };
 
-        // 테마별 액센트 컬러 매핑
         const ACCENTS = {
-            'default': '#f97316', // Orange
-            'pastel-blue': '#0284c7', // Blue
-            'pastel-indigo': '#6366f1', // Indigo
-            'pastel-green': '#16a34a', // Green
-            'pastel-emerald': '#059669', // Emerald
-            'pastel-teal': '#0d9488', // Teal
-            'pastel-pink': '#db2777', // Pink
-            'pastel-rose': '#e11d48', // Rose
-            'pastel-orange': '#ea580c', // Orange-red
-            'pastel-yellow': '#ca8a04', // Yellow-gold
-            'pastel-purple': '#9333ea', // Purple
-            'custom': '#f97316' // Custom (JS에서 계산 가능하지만 기본 오렌지)
+            'default': '#f97316', 'pastel-blue': '#0284c7', 'pastel-indigo': '#6366f1',
+            'pastel-green': '#16a34a', 'pastel-emerald': '#059669', 'pastel-teal': '#0d9488',
+            'pastel-pink': '#db2777', 'pastel-rose': '#e11d48', 'pastel-orange': '#ea580c',
+            'pastel-yellow': '#ca8a04', 'pastel-purple': '#9333ea', 'custom': '#f97316'
         };
 
         let mealDate = new Date();
@@ -367,7 +354,7 @@
         let musicPlaylist = [];
         let currentMusicIdx = 0;
 
-        const saved = localStorage.getItem('happy_class_config_v3_31');
+        const saved = localStorage.getItem('happy_class_config_v3_32');
         if (saved) config = { ...config, ...JSON.parse(saved) };
         if (!config.schedule || config.schedule.length === 0) config.schedule = generateDefaultSchedule('09:00', config.lunchAfter);
 
@@ -437,10 +424,6 @@
                 badge.className = (status === "주말" || status === "공휴일") 
                     ? "glass inline-block px-8 py-4 rounded-3xl text-3xl font-black shadow-xl border-white/50 text-red-500 mb-2"
                     : `glass inline-block px-8 py-4 rounded-3xl text-3xl font-black shadow-xl border-white/50 mb-2 ${status.includes('교시') ? 'dynamic-accent-text' : 'text-blue-600'}`;
-                
-                if (document.body.style.color === 'rgb(241, 245, 249)') { // isDark check
-                    badge.classList.replace('glass', 'glass-dark');
-                }
             }
         }
 
@@ -463,21 +446,21 @@
             });
         }
 
-        /* 미디어 기능 */
+        /* 앨범 기능 (5초 단위 무한 슬라이드) */
         function startAlbum() {
             if (albumInterval) clearInterval(albumInterval);
-            if (albumPhotos.length > 0) {
+            if (albumPhotos.length > 1) {
                 albumInterval = setInterval(() => {
-                    albumIdx = (albumIdx + 1) % albumPhotos.length;
                     const img = document.getElementById('album-image');
                     if (img) {
                         img.classList.add('fade-out');
                         setTimeout(() => {
+                            albumIdx = (albumIdx + 1) % albumPhotos.length;
                             img.src = albumPhotos[albumIdx];
                             img.classList.remove('fade-out');
-                        }, 800);
+                        }, 1000); // 1초간 페이드 아웃 후 이미지 교체
                     }
-                }, 5000);
+                }, 5000); // 5초 간격
             }
         }
         function stopAlbum() { if (albumInterval) clearInterval(albumInterval); }
@@ -491,6 +474,7 @@
             if (config.viewMode === 'album') renderContent();
         }
 
+        /* 음악 기능 */
         function toggleMusic() {
             if (musicPlaylist.length === 0) { openSettings(); return; }
             if (audioBgm.paused) {
@@ -549,12 +533,12 @@
 
         function setVolume(val) { audioBgm.volume = val; }
 
-        /* 테마 설정 기능 및 글자색 최적화 */
+        /* 테마 색상 적용 */
         function setThemeColor(themeKey) {
             config.themeColor = themeKey;
             applyBackground();
             updateColorSelectionUI();
-            renderContent(); // 메뉴 버튼 색상 갱신을 위해 호출
+            renderContent();
             saveToLocal();
         }
 
@@ -587,55 +571,27 @@
             const themeValue = THEMES[config.themeColor] || THEMES['pastel-indigo'];
             let currentHex = themeValue;
 
-            if (config.themeColor === 'default') {
-                bg.style.background = THEMES['default'];
-            } else if (config.themeColor === 'custom') {
-                bg.style.background = config.customColor;
-                currentHex = config.customColor;
-            } else {
-                bg.style.background = themeValue;
-            }
+            if (config.themeColor === 'default') { bg.style.background = THEMES['default']; } 
+            else if (config.themeColor === 'custom') { bg.style.background = config.customColor; currentHex = config.customColor; } 
+            else { bg.style.background = themeValue; }
 
-            // 액센트 컬러 설정 (CSS 변수 업데이트)
             const accent = ACCENTS[config.themeColor] || ACCENTS['default'];
             document.documentElement.style.setProperty('--accent-color', accent);
 
-            // 글자색 대비 설정
             const luminance = getLuminance(currentHex);
             const isDark = luminance < 0.5;
             const body = document.body;
-            const dateDisp = document.getElementById('date-display');
-            const timeDisp = document.getElementById('time-display');
             
             if (isDark) {
                 body.style.color = '#F1F5F9';
-                if (dateDisp) dateDisp.classList.remove('text-slate-700');
-                if (timeDisp) timeDisp.classList.remove('text-slate-800');
                 document.getElementById('status-badge')?.classList.replace('glass', 'glass-dark');
             } else {
                 body.style.color = '#1E293B';
-                if (dateDisp) dateDisp.classList.add('text-slate-700');
-                if (timeDisp) timeDisp.classList.add('text-slate-800');
                 document.getElementById('status-badge')?.classList.replace('glass-dark', 'glass');
             }
         }
 
-        /* 급식 및 알림장 */
-        async function fetchNEIS(endpoint, params) { 
-            const q = new URLSearchParams({ Type:'json', KEY:NEIS_API_KEY, ...params }); 
-            const r = await fetch(`${NEIS_BASE_URL}/${endpoint}?${q}`); 
-            return await r.json(); 
-        }
-
-        async function getMealData() {
-            if (!config.schoolInfo) return null;
-            const ymd = mealDate.getFullYear() + String(mealDate.getMonth() + 1).padStart(2, '0') + String(mealDate.getDate()).padStart(2, '0');
-            try { 
-                const data = await fetchNEIS('mealServiceDietInfo', { ATPT_OFCDC_SC_CODE: config.schoolInfo.atptCode, SD_SCHUL_CODE: config.schoolInfo.schulCode, MLSV_YMD: ymd }); 
-                return data.mealServiceDietInfo ? data.mealServiceDietInfo[1].row[0] : null; 
-            } catch (e) { return null; }
-        }
-
+        /* 탭 전환 및 렌더링 */
         function toggleView(mode) { 
             config.viewMode = mode; 
             if (mode === 'album') startAlbum(); else stopAlbum();
@@ -664,7 +620,7 @@
             if (config.viewMode === 'album') {
                 titleEl.innerText = "우리 반 앨범"; 
                 if (albumPhotos.length === 0) {
-                    container.innerHTML = `<div class="glass p-10 rounded-[3rem] h-full flex flex-col items-center justify-center opacity-50"><i data-lucide="images" class="w-20 h-20 mb-4"></i><p class="text-xl font-bold">환경 설정에서 사진 폴더를 선택하세요</p></div>`;
+                    container.innerHTML = `<div class="glass p-10 rounded-[3rem] h-full flex flex-col items-center justify-center opacity-50"><i data-lucide="images" class="w-20 h-20 mb-4"></i><p class="text-xl font-bold">환경 설정에서 바탕화면의 '앨범' 폴더를 선택하세요</p></div>`;
                 } else {
                     container.innerHTML = `<div class="w-full h-full flex items-center justify-center overflow-hidden"><img id="album-image" src="${albumPhotos[albumIdx]}" class="max-w-full max-h-full object-contain"></div>`;
                 }
@@ -697,7 +653,7 @@
                         <button onclick="changeNoticeDate(-1)" class="p-2 hover:bg-white/30 rounded-full transition-all"><i data-lucide="chevron-left"></i></button>
                         <span class="text-2xl font-black">${formattedDate}</span>
                         <button onclick="changeNoticeDate(1)" class="p-2 hover:bg-white/30 rounded-full transition-all"><i data-lucide="chevron-right"></i></button>
-                    </div><textarea id="notice-textarea" class="text-slate-800" oninput="saveNoticeForDate(this.value)" placeholder="내용을 입력하세요">${config.notices[ymdKey] || ''}</textarea></div>`;
+                    </div><textarea id="notice-textarea" oninput="saveNoticeForDate(this.value)" placeholder="내용을 입력하세요">${config.notices[ymdKey] || ''}</textarea></div>`;
             } else {
                 const type = config.viewMode === 'rules' ? 'rules' : 'announcements';
                 titleEl.innerText = type === 'rules' ? "우리 반 약속" : "공지사항"; 
@@ -722,16 +678,22 @@
         function changeNoticeDate(days) { noticeDate.setDate(noticeDate.getDate() + days); renderContent(); }
         function saveNoticeForDate(val) { const ymd = noticeDate.toISOString().split('T')[0]; config.notices[ymd] = val; saveToLocal(); showAutoSaveIndicator(); }
 
-        /* 설정 관리 */
+        /* NEIS API 및 설정 */
+        async function fetchNEIS(endpoint, params) { const q = new URLSearchParams({ Type:'json', KEY:NEIS_API_KEY, ...params }); const r = await fetch(`${NEIS_BASE_URL}/${endpoint}?${q}`); return await r.json(); }
+        async function getMealData() {
+            if (!config.schoolInfo) return null;
+            const ymd = mealDate.getFullYear() + String(mealDate.getMonth() + 1).padStart(2, '0') + String(mealDate.getDate()).padStart(2, '0');
+            try { const data = await fetchNEIS('mealServiceDietInfo', { ATPT_OFCDC_SC_CODE: config.schoolInfo.atptCode, SD_SCHUL_CODE: config.schoolInfo.schulCode, MLSV_YMD: ymd }); return data.mealServiceDietInfo ? data.mealServiceDietInfo[1].row[0] : null; } 
+            catch (e) { return null; }
+        }
+
         async function searchSchoolInSettings() {
-            const r = document.getElementById('region-select').value; 
-            const n = document.getElementById('school-name-search').value.trim(); 
-            if(!n) return;
+            const r = document.getElementById('region-select').value; const n = document.getElementById('school-name-search').value.trim(); if(!n) return;
             const res = document.getElementById('school-search-results'); res.innerHTML='<div class="text-sm p-3">검색 중...</div>';
             try { 
                 const d = await fetchNEIS('schoolInfo', { ATPT_OFCDC_SC_CODE:r, SCHUL_NM:n });
                 if(d.schoolInfo) res.innerHTML = d.schoolInfo[1].row.map(s => `<button onclick="selectSchool('${s.ATPT_OFCDC_SC_CODE}', '${s.SD_SCHUL_CODE}', '${s.SCHUL_NM}')" class="w-full text-left p-3 border rounded-xl hover:bg-blue-50 text-sm font-bold">${s.SCHUL_NM}</button>`).join('');
-                else res.innerHTML = '<div class="text-sm p-3 text-slate-800">결과 없음</div>';
+                else res.innerHTML = '<div class="text-sm p-3">결과 없음</div>';
             } catch(e){ res.innerHTML = '<div class="text-sm p-3 text-red-500">오류 발생</div>'; }
         }
         function selectSchool(atpt, schul, name) { config.tempSchool = { atptCode:atpt, schulCode:schul, schulNm:name }; document.getElementById('selected-school-info').innerText=`✅ 선택됨: ${name}`; }
@@ -749,8 +711,7 @@
         }
 
         function renderScheduleEditor(schArray) {
-            const ed = document.getElementById('schedule-editor');
-            if(!ed) return;
+            const ed = document.getElementById('schedule-editor'); if(!ed) return;
             ed.innerHTML = schArray.map(s => `<div class="flex flex-col gap-2 border p-4 rounded-xl bg-white schedule-item-row"><span class="font-bold text-sm text-slate-400 uppercase sch-name">${s.name}</span><div class="flex items-center gap-2"><input type="text" value="${s.start}" class="sch-start-in w-full p-2 border rounded-lg text-lg font-black text-center text-slate-800"><span>~</span><input type="text" value="${s.end}" class="sch-end-in w-full p-2 border rounded-lg text-lg font-black text-center text-slate-800"></div></div>`).join('');
         }
 
@@ -761,19 +722,10 @@
             document.getElementById('lunch-after-input').value = config.lunchAfter || 4; 
             const de = document.getElementById('dday-editor'); de.innerHTML = '';
             config.ddays.forEach(d => addRow('dday-editor', d.text, d.date)); 
-            const f = config.schedule.find(s => s.name === '1교시'); 
-            if (f) document.getElementById('start-time-trigger').value = f.start;
+            const f = config.schedule.find(s => s.name === '1교시'); if (f) document.getElementById('start-time-trigger').value = f.start;
             document.getElementById('selected-school-info').innerText = config.schoolInfo ? `✅ 현재: ${config.schoolInfo.schulNm}` : "";
-            
-            if (config.themeColor === 'custom') {
-                document.getElementById('color-custom').style.backgroundColor = config.customColor;
-                document.getElementById('custom-color-input').value = config.customColor;
-            }
-
-            renderPeriodSelectors();
-            renderScheduleEditor(config.schedule); 
-            updateColorSelectionUI();
-            lucide.createIcons();
+            if (config.themeColor === 'custom') { document.getElementById('color-custom').style.backgroundColor = config.customColor; document.getElementById('custom-color-input').value = config.customColor; }
+            renderPeriodSelectors(); renderScheduleEditor(config.schedule); updateColorSelectionUI(); lucide.createIcons();
         }
 
         function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
@@ -790,18 +742,13 @@
             saveToLocal(); applyBackground(); renderContent(); updateTime(); closeSettings(); showAutoSaveIndicator();
         }
 
-        function saveToLocal() { localStorage.setItem('happy_class_config_v3_31', JSON.stringify(config)); }
+        function saveToLocal() { localStorage.setItem('happy_class_config_v3_32', JSON.stringify(config)); }
         function showAutoSaveIndicator() { const i = document.getElementById('auto-save-indicator'); if(i) { i.style.opacity = '1'; setTimeout(() => { i.style.opacity = '0'; }, 1000); } }
 
         function renderPeriodSelectors() {
             ['mon', 'tue', 'wed', 'thu', 'fri'].forEach((day, idx) => {
-                const select = document.getElementById(`period-${day}`);
-                if (!select) return;
-                let options = '';
-                for (let i = 4; i <= 6; i++) {
-                    const selected = config.dailyPeriods[idx + 1] == i ? 'selected' : '';
-                    options += `<option value="${i}" ${selected}>${i}</option>`;
-                }
+                const select = document.getElementById(`period-${day}`); if (!select) return;
+                let options = ''; for (let i = 4; i <= 6; i++) { const selected = config.dailyPeriods[idx + 1] == i ? 'selected' : ''; options += `<option value="${i}" ${selected}>${i}</option>`; }
                 select.innerHTML = options;
             });
         }
