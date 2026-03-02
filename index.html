@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Happy Class (V3.51)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
+    <title>Happy Class (V3.56)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -18,9 +18,10 @@
         }
         body {
             font-family: "Pretendard Variable", Pretendard, sans-serif;
-            overflow: hidden;
             transition: background 0.5s ease, color 0.5s ease;
-            height: 100dvh;
+            min-height: 100dvh;
+            overflow-y: auto; /* 전체 스크롤 허용 */
+            background-attachment: fixed;
         }
         .glass {
             background: rgba(255, 255, 255, 0.45);
@@ -43,22 +44,47 @@
             transition: all 0.8s ease;
         }
 
+        /* Responsive Layout & Scrolling */
         .main-container {
             display: flex;
             flex-direction: column;
             width: 100%;
-            height: 100%;
+            min-height: 100dvh;
+            margin: 0 auto;
         }
-        @media (min-aspect-ratio: 1/1) {
-            .main-container { flex-direction: row; }
-            #left-panel { width: 38%; height: 100%; }
-            #right-panel { width: 62%; height: 100%; }
+
+        /* 태블릿 이상의 가로 화면 (데스크톱 포함) */
+        @media (min-width: 1024px) {
+            .main-container {
+                flex-direction: row;
+                height: 100vh;
+                overflow: hidden;
+            }
+            #left-panel {
+                width: 35%; 
+                height: 100%; 
+                overflow-y: auto;
+                padding-right: 1.5rem;
+            }
+            #right-panel {
+                width: 65%; 
+                height: 100%; 
+                overflow: hidden;
+            }
         }
-        @media (max-aspect-ratio: 1/1) {
-            .main-container { flex-direction: column; overflow-y: auto; }
-            #left-panel { width: 100%; height: auto; padding-top: 1rem; padding-bottom: 1rem; }
-            #right-panel { width: 100%; flex-grow: 1; padding-top: 1rem; }
-            body { overflow-y: auto; }
+
+        /* 모바일 및 세로형 태블릿 */
+        @media (max-width: 1023px) {
+            #left-panel {
+                width: 100%;
+                padding: 1.5rem 1rem;
+                text-align: center;
+            }
+            #right-panel {
+                width: 100%;
+                padding: 1rem;
+                min-height: 60dvh;
+            }
         }
 
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -69,8 +95,8 @@
         
         #notice-textarea { 
             background: transparent; border: none; outline: none; resize: none; 
-            width: 100%; height: 100%; font-size: 1.8rem; line-height: 1.5; 
-            font-weight: 700; 
+            width: 100%; height: 100%; font-size: 1.25rem; line-height: 1.5; 
+            font-weight: 700; min-height: 250px;
         }
         @media (min-width: 1024px) { #notice-textarea { font-size: 2.2rem; } }
 
@@ -84,87 +110,84 @@
             width: 30px; height: 30px; 
             animation: spin 1s linear infinite; 
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(3600deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .dynamic-accent-text { color: var(--accent-color) !important; }
         .dynamic-accent-bg { background-color: var(--accent-color) !important; }
         
         .btn-active { color: var(--accent-color) !important; background: rgba(255, 255, 255, 0.4); border-radius: 50%; }
         
-        input[type='range']::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 12px; height: 12px; background: var(--accent-color);
-            cursor: pointer; border-radius: 50%;
-        }
-
         .color-circle {
-            width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
-            border: 3px solid white; transition: all 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+            border: 2px solid white; transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex; align-items: center; justify-content: center;
         }
+        @media (min-width: 768px) { .color-circle { width: 40px; height: 40px; } }
         .color-circle:hover { transform: translateY(-2px) scale(1.1); }
-        .color-circle.selected { border-color: var(--accent-color); transform: scale(1.1); }
+        .color-circle.selected { border-color: var(--accent-color); transform: scale(1.15); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
         .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* 모바일에서 버튼 바 가독성 개선 */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="text-slate-800 flex items-center justify-center overflow-hidden">
+<body class="text-slate-800">
     <div id="bg-container"></div>
 
-    <main class="main-container p-4 md:p-6 lg:p-8 z-10 w-full h-full">
+    <main class="main-container p-3 md:p-6 lg:p-8 z-10">
         <!-- 좌측 영역 (시계 및 상태) -->
-        <section id="left-panel" class="flex flex-col justify-between py-4 lg:py-6 px-4 lg:pl-6 text-shadow-lg transition-all">
-            <!-- 제목 및 날짜 그룹: 간격을 벌리기 위해 justify-start와 gap 적용 -->
-            <div class="flex flex-col items-center lg:items-start gap-10 lg:gap-16">
-                <!-- 타이틀: 최상단 배치 -->
-                <h1 id="left-panel-title" class="font-black tracking-tighter text-shadow-strong break-keep leading-tight">Happy Class</h1>
+        <section id="left-panel" class="flex flex-col justify-between py-4 lg:py-6 px-4 text-shadow-lg transition-all custom-scrollbar">
+            <div class="flex flex-col items-center lg:items-start gap-4 lg:gap-12">
+                <!-- 타이틀 -->
+                <h1 id="left-panel-title" class="font-black tracking-tighter text-shadow-strong break-keep leading-tight text-3xl md:text-5xl lg:text-6xl xl:text-7xl">Happy Class</h1>
                 
                 <!-- 날짜 및 요일 -->
-                <div class="space-y-2 text-center lg:text-left">
-                    <div id="date-display" class="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight opacity-90">2026. 02. 28</div>
-                    <!-- 요일: 테마 컬러 적용 및 투명도 제거 -->
-                    <div id="day-display" class="text-4xl md:text-5xl lg:text-6xl font-black dynamic-accent-text">토요일</div>
+                <div class="space-y-1 lg:space-y-2 text-center lg:text-left">
+                    <div id="date-display" class="text-lg md:text-2xl lg:text-3xl font-bold tracking-tight opacity-90">0000. 00. 00</div>
+                    <div id="day-display" class="text-3xl md:text-5xl lg:text-6xl font-black dynamic-accent-text">요일</div>
                 </div>
             </div>
 
             <!-- 시계 부분 -->
-            <div class="flex flex-col gap-0 mt-8 lg:mt-0 items-center lg:items-start">
+            <div class="flex flex-col gap-0 mt-6 lg:mt-0 items-center lg:items-start">
                 <div class="flex flex-col items-center lg:items-start">
-                    <span id="ampm-display" class="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 dynamic-accent-text">오전</span>
+                    <span id="ampm-display" class="text-xl md:text-3xl lg:text-4xl font-bold mb-1 dynamic-accent-text">--</span>
                     <div class="flex items-baseline">
-                        <span id="time-display" class="text-7xl md:text-8xl lg:text-[10rem] font-black leading-none tracking-tighter text-shadow-strong">07:35</span>
-                        <span class="text-2xl md:text-3xl lg:text-4xl font-bold opacity-50 ml-2 md:ml-4">: <span id="sec-display">28</span></span>
+                        <span id="time-display" class="text-5xl md:text-8xl lg:text-[7rem] xl:text-[8.5rem] font-black leading-none tracking-tighter text-shadow-strong">00:00</span>
+                        <span class="text-xl md:text-3xl lg:text-4xl font-bold opacity-50 ml-2 md:ml-4">: <span id="sec-display">00</span></span>
                     </div>
                 </div>
             </div>
 
             <!-- 하단 상태 정보 -->
             <div class="space-y-3 flex flex-col items-center lg:items-start mt-6 lg:mt-0">
-                <div id="status-badge" class="glass inline-block px-6 lg:px-8 py-3 lg:py-4 rounded-3xl text-xl lg:text-3xl font-black shadow-xl border-white/50 mb-2">아침자습</div>
+                <div id="status-badge" class="glass inline-block px-5 lg:px-8 py-2.5 lg:py-4 rounded-2xl lg:rounded-3xl text-lg lg:text-3xl font-black shadow-xl border-white/50 mb-2">상태 로딩중</div>
                 <div id="dday-container" class="flex flex-wrap justify-center lg:justify-start gap-2 max-w-full"></div>
             </div>
         </section>
 
         <!-- 우측 영역 (대시보드 콘텐츠) -->
-        <section id="right-panel" class="flex flex-col p-2 lg:p-4 overflow-hidden h-full">
-            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-6 lg:mb-8 gap-4">
-                <div class="flex flex-col md:flex-row items-center md:items-end gap-4 w-full md:w-auto overflow-hidden">
-                    <div class="text-center md:text-left hidden md:block">
+        <section id="right-panel" class="flex flex-col p-2 lg:p-4">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-4 lg:mb-8 gap-4">
+                <div class="flex flex-col md:flex-row items-center md:items-end gap-4 w-full md:w-auto">
+                    <div class="text-center md:text-left hidden lg:block">
                         <h2 id="right-title" class="text-3xl lg:text-5xl font-black dynamic-accent-text mb-1 text-shadow-lg whitespace-nowrap">Dashboard</h2>
-                        <p id="right-subtitle" class="text-sm lg:text-lg font-bold tracking-widest opacity-70 uppercase">Smart Classroom</p>
+                        <p id="right-subtitle" class="text-xs lg:text-lg font-bold tracking-widest opacity-70 uppercase">Smart Classroom</p>
                     </div>
                     <!-- 탭 전환 버튼 -->
                     <div class="flex bg-white/20 p-1 rounded-2xl backdrop-blur-sm border border-white/20 overflow-x-auto custom-scrollbar w-full md:w-auto scrollbar-hide">
-                        <button onclick="toggleView('rules')" id="btn-view-rules" class="flex-1 md:flex-none px-3 lg:px-5 py-2.5 rounded-xl font-bold transition-all text-xs lg:text-sm whitespace-nowrap">약속</button>
-                        <button onclick="toggleView('notice')" id="btn-view-notice" class="flex-1 md:flex-none px-3 lg:px-5 py-2.5 rounded-xl font-bold transition-all text-xs lg:text-sm whitespace-nowrap">알림장</button>
-                        <button onclick="toggleView('announcements')" id="btn-view-announcements" class="flex-1 md:flex-none px-3 lg:px-5 py-2.5 rounded-xl font-bold transition-all text-xs lg:text-sm whitespace-nowrap">공지</button>
-                        <button onclick="toggleView('meal')" id="btn-view-meal" class="flex-1 md:flex-none px-3 lg:px-5 py-2.5 rounded-xl font-bold transition-all text-xs lg:text-sm whitespace-nowrap">급식</button>
-                        <button onclick="toggleView('album')" id="btn-view-album" class="flex-1 md:flex-none px-3 lg:px-5 py-2.5 rounded-xl font-bold transition-all text-xs lg:text-sm whitespace-nowrap">앨범</button>
+                        <button onclick="toggleView('rules')" id="btn-view-rules" class="flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-bold transition-all text-[11px] lg:text-sm whitespace-nowrap">약속</button>
+                        <button onclick="toggleView('notice')" id="btn-view-notice" class="flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-bold transition-all text-[11px] lg:text-sm whitespace-nowrap">알림장</button>
+                        <button onclick="toggleView('announcements')" id="btn-view-announcements" class="flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-bold transition-all text-[11px] lg:text-sm whitespace-nowrap">공지</button>
+                        <button onclick="toggleView('meal')" id="btn-view-meal" class="flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-bold transition-all text-[11px] lg:text-sm whitespace-nowrap">급식</button>
+                        <button onclick="toggleView('album')" id="btn-view-album" class="flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-bold transition-all text-[11px] lg:text-sm whitespace-nowrap">앨범</button>
                     </div>
                 </div>
                 
@@ -176,56 +199,56 @@
 
                     <div class="flex items-center gap-1 bg-white/30 backdrop-blur-md rounded-full px-2 lg:px-3 py-1 shadow-lg border border-white/20">
                         <button onclick="playPrev()" class="p-1.5 hover:scale-110 transition-all opacity-70 hover:opacity-100">
-                            <i data-lucide="skip-back" class="w-4 h-4 lg:w-5 lg:h-5"></i>
+                            <i data-lucide="skip-back" class="w-3.5 h-3.5 lg:w-5 lg:h-5"></i>
                         </button>
                         <button id="music-play-btn" onclick="toggleMusic()" class="p-1.5 lg:p-2 hover:scale-110 transition-all dynamic-accent-text">
-                            <i data-lucide="play" id="music-icon" class="w-6 h-6 lg:w-7 lg:h-7"></i>
+                            <i data-lucide="play" id="music-icon" class="w-5 h-5 lg:w-7 lg:h-7"></i>
                         </button>
                         <button onclick="playNext()" class="p-1.5 hover:scale-110 transition-all opacity-70 hover:opacity-100">
-                            <i data-lucide="skip-forward" class="w-4 h-4 lg:w-5 lg:h-5"></i>
+                            <i data-lucide="skip-forward" class="w-3.5 h-3.5 lg:w-5 lg:h-5"></i>
                         </button>
-                        <input type="range" id="music-volume" min="0" max="1" step="0.1" value="0.5" class="hidden sm:block w-12 lg:w-16 h-1 bg-white/40 rounded-lg appearance-none cursor-pointer mx-1" oninput="setVolume(this.value)">
                         <button id="music-shuffle-btn" onclick="toggleShuffle()" class="p-1.5 hover:scale-110 transition-all opacity-40">
-                            <i data-lucide="shuffle" class="w-4 h-4 lg:w-5 lg:h-5"></i>
+                            <i data-lucide="shuffle" class="w-3.5 h-3.5 lg:w-5 lg:h-5"></i>
                         </button>
                     </div>
 
-                    <button onclick="openSettings()" class="p-2.5 lg:p-3 bg-white/30 backdrop-blur-md rounded-full hover:bg-white/50 transition-all shadow-lg border border-white/20">
-                        <i data-lucide="settings" class="w-6 h-6 lg:w-8 lg:h-8"></i>
+                    <button onclick="openSettings()" class="p-2 lg:p-3 bg-white/30 backdrop-blur-md rounded-full hover:bg-white/50 transition-all shadow-lg border border-white/20">
+                        <i data-lucide="settings" class="w-5 h-5 lg:w-8 lg:h-8"></i>
                     </button>
                 </div>
             </div>
 
-            <div id="content-display-area" class="flex-1 overflow-y-auto pr-1 lg:pr-2 custom-scrollbar min-h-[300px]"></div>
+            <!-- 우측 콘텐츠 표시 영역 -->
+            <div id="content-display-area" class="flex-1 overflow-y-auto pr-1 lg:pr-2 custom-scrollbar min-h-[300px] pb-10"></div>
         </section>
     </main>
 
     <!-- 환경 설정 모달 -->
     <div id="settings-modal" class="fixed inset-0 bg-black/60 hidden items-start justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto" onclick="handleOutsideClick(event)">
-        <div class="bg-white rounded-[2rem] md:rounded-[2.5rem] w-full max-w-4xl my-4 md:my-8 p-6 md:p-10 shadow-2xl relative" onclick="event.stopPropagation()">
+        <div class="bg-white rounded-[2rem] w-full max-w-4xl my-4 md:my-8 p-5 md:p-10 shadow-2xl relative" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-6 border-b pb-4 sticky top-0 bg-white z-10">
-                <div class="flex items-center gap-2 md:gap-3">
+                <div class="flex items-center gap-2">
                     <i data-lucide="sliders" class="text-orange-500 w-6 h-6 md:w-8 md:h-8"></i>
-                    <h3 class="text-xl md:text-3xl font-black text-slate-800 break-keep">환경 설정</h3>
+                    <h3 class="text-lg md:text-3xl font-black text-slate-800 break-keep">환경 설정</h3>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="saveSettings()" class="px-4 md:px-6 py-2 bg-orange-500 text-white rounded-xl font-bold text-xs md:text-sm shadow-lg hover:bg-orange-600 transition-all">저장</button>
-                    <button onclick="closeSettings()" class="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"><i data-lucide="x" class="w-6 h-6 md:w-8 md:h-8"></i></button>
+                    <button onclick="saveSettings()" class="px-4 py-2 bg-orange-500 text-white rounded-xl font-bold text-xs md:text-sm shadow-lg hover:bg-orange-600 transition-all">저장</button>
+                    <button onclick="closeSettings()" class="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
                 </div>
             </div>
 
             <div class="space-y-6 md:space-y-8 pb-4">
                 <!-- 제목 세부 설정 -->
                 <div class="bg-indigo-50 p-4 md:p-6 rounded-2xl border border-indigo-100 space-y-4">
-                    <h4 class="font-bold text-lg md:text-xl flex items-center gap-2 text-indigo-700"><i data-lucide="type" class="w-5 h-5 md:w-6 md:h-6"></i> 앱 제목 설정</h4>
+                    <h4 class="font-bold text-base md:text-xl flex items-center gap-2 text-indigo-700"><i data-lucide="type" class="w-5 h-5"></i> 앱 제목 설정</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-indigo-400 ml-1">제목 내용</label>
-                            <input type="text" id="title-text-input" class="p-2.5 border rounded-xl font-bold bg-white outline-none focus:ring-2 focus:ring-indigo-300 text-sm">
+                            <label class="text-[10px] font-bold text-indigo-400 ml-1">제목 내용</label>
+                            <input type="text" id="title-text-input" class="p-2 border rounded-xl font-bold bg-white outline-none focus:ring-2 focus:ring-indigo-300 text-sm">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-indigo-400 ml-1">글꼴</label>
-                            <select id="title-font-input" class="p-2.5 border rounded-xl font-bold bg-white outline-none text-sm">
+                            <label class="text-[10px] font-bold text-indigo-400 ml-1">글꼴</label>
+                            <select id="title-font-input" class="p-2 border rounded-xl font-bold bg-white outline-none text-sm">
                                 <optgroup label="기본">
                                     <option value='"Pretendard Variable", Pretendard'>Pretendard</option>
                                     <option value='"Malgun Gothic", sans-serif'>맑은 고딕</option>
@@ -239,20 +262,19 @@
                             </select>
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-indigo-400 ml-1">크기</label>
-                            <select id="title-size-input" class="p-2.5 border rounded-xl font-bold bg-white outline-none text-sm">
-                                <option value="4xl">4xl</option><option value="5xl">5xl</option>
-                                <option value="6xl">6xl</option><option value="7xl">7xl</option>
-                                <option value="8xl">8xl</option><option value="9xl">9xl</option>
+                            <label class="text-[10px] font-bold text-indigo-400 ml-1">크기</label>
+                            <select id="title-size-input" class="p-2 border rounded-xl font-bold bg-white outline-none text-sm">
+                                <option value="3xl">3xl</option><option value="4xl">4xl</option><option value="5xl">5xl</option>
+                                <option value="6xl">6xl</option><option value="7xl">7xl</option><option value="8xl">8xl</option>
                             </select>
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-indigo-400 ml-1">색상</label>
-                            <div class="flex items-center gap-2 bg-white p-1 rounded-xl border border-indigo-100 h-[42px]">
-                                <input type="color" id="title-color-input" class="w-10 h-8 border-none bg-transparent cursor-pointer">
-                                <div class="flex items-center gap-1.5 pr-1">
-                                    <input type="checkbox" id="title-sync-checkbox" class="custom-checkbox scale-90" onchange="toggleTitleColorPicker(this.checked)">
-                                    <label for="title-sync-checkbox" class="text-[10px] font-bold text-slate-500 whitespace-nowrap">테마맞춤</label>
+                            <label class="text-[10px] font-bold text-indigo-400 ml-1">색상</label>
+                            <div class="flex items-center gap-2 bg-white p-1 rounded-xl border border-indigo-100 h-[38px]">
+                                <input type="color" id="title-color-input" class="w-10 h-7 border-none bg-transparent cursor-pointer">
+                                <div class="flex items-center gap-1 pr-1">
+                                    <input type="checkbox" id="title-sync-checkbox" class="scale-90" onchange="toggleTitleColorPicker(this.checked)">
+                                    <label for="title-sync-checkbox" class="text-[9px] font-bold text-slate-500 whitespace-nowrap">테마맞춤</label>
                                 </div>
                             </div>
                         </div>
@@ -260,22 +282,22 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                    <div class="lg:col-span-2 space-y-3 bg-orange-50 p-4 md:p-5 rounded-2xl border border-orange-100">
-                        <h4 class="font-bold text-lg flex items-center gap-2 text-orange-700"><i data-lucide="play-circle" class="w-5 h-5"></i> 앨범/음악</h4>
+                    <div class="lg:col-span-2 space-y-3 bg-orange-50 p-4 rounded-2xl border border-orange-100">
+                        <h4 class="font-bold text-base flex items-center gap-2 text-orange-700"><i data-lucide="play-circle" class="w-5 h-5"></i> 앨범/음악</h4>
                         <div class="space-y-2">
                             <div class="flex gap-2">
-                                <button onclick="document.getElementById('album-folder-input').click()" class="flex-1 p-2.5 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-[11px] hover:bg-orange-100">사진 폴더</button>
-                                <button onclick="document.getElementById('album-file-input').click()" class="flex-1 p-2.5 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-[11px] hover:bg-orange-100">사진 파일</button>
+                                <button onclick="document.getElementById('album-folder-input').click()" class="flex-1 p-2 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-[10px] hover:bg-orange-100">사진 폴더</button>
+                                <button onclick="document.getElementById('album-file-input').click()" class="flex-1 p-2 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-[10px] hover:bg-orange-100">사진 파일</button>
                             </div>
                             <div class="flex items-center gap-2 bg-white/50 p-2 rounded-xl">
-                                <span class="text-[11px] font-bold text-orange-600 whitespace-nowrap">간격(초):</span>
-                                <input type="number" id="album-interval-input" min="1" max="60" class="flex-1 p-1 text-center font-bold border rounded-lg text-sm">
+                                <span class="text-[10px] font-bold text-orange-600 whitespace-nowrap">간격(초):</span>
+                                <input type="number" id="album-interval-input" min="1" max="60" class="flex-1 p-1 text-center font-bold border rounded-lg text-xs">
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="document.getElementById('music-folder-input').click()" class="flex-1 p-2.5 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-[11px] hover:bg-orange-100">음악 폴더</button>
-                                <button onclick="document.getElementById('music-file-input').click()" class="flex-1 p-2.5 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-[11px] hover:bg-orange-100">음악 파일</button>
+                                <button onclick="document.getElementById('music-folder-input').click()" class="flex-1 p-2 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-[10px] hover:bg-orange-100">음악 폴더</button>
+                                <button onclick="document.getElementById('music-file-input').click()" class="flex-1 p-2 bg-white border border-orange-200 text-orange-600 rounded-xl font-bold text-[10px] hover:bg-orange-100">음악 파일</button>
                             </div>
-                            <p id="album-status-msg" class="text-[10px] text-slate-400 font-bold text-center">선택된 미디어 없음</p>
+                            <p id="album-status-msg" class="text-[9px] text-slate-400 font-bold text-center">선택된 미디어 없음</p>
                         </div>
                         <input type="file" id="album-folder-input" webkitdirectory directory multiple class="hidden" onchange="handleAlbumFiles(this)">
                         <input type="file" id="album-file-input" accept="image/*" multiple class="hidden" onchange="handleAlbumFiles(this)">
@@ -283,31 +305,36 @@
                         <input type="file" id="music-file-input" accept="audio/*" multiple class="hidden" onchange="loadMusic(this)">
                     </div>
 
-                    <div class="lg:col-span-3 space-y-3 bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200">
-                        <h4 class="font-bold text-lg flex items-center gap-2 text-slate-700"><i data-lucide="palette" class="w-5 h-5"></i> 배경 테마</h4>
-                        <div class="flex flex-wrap gap-2.5 justify-center py-1">
-                            <div onclick="setThemeColor('default')" id="color-default" class="color-circle bg-[#FDFCFB]" title="그라디언트"></div>
-                            <div onclick="setThemeColor('pastel-blue')" id="color-pastel-blue" class="color-circle bg-[#E0F2FE]"></div>
-                            <div onclick="setThemeColor('pastel-indigo')" id="color-pastel-indigo" class="color-circle bg-[#E0E7FF]"></div>
-                            <div onclick="setThemeColor('pastel-green')" id="color-pastel-green" class="color-circle bg-[#DCFCE7]"></div>
-                            <div onclick="setThemeColor('pastel-emerald')" id="color-pastel-emerald" class="color-circle bg-[#D1FAE5]"></div>
-                            <div onclick="setThemeColor('pastel-teal')" id="color-pastel-teal" class="color-circle bg-[#CCFBF1]"></div>
-                            <div onclick="setThemeColor('pastel-pink')" id="color-pastel-pink" class="color-circle bg-[#FCE7F3]"></div>
-                            <div onclick="setThemeColor('pastel-rose')" id="color-pastel-rose" class="color-circle bg-[#FFE4E6]"></div>
-                            <div onclick="setThemeColor('pastel-orange')" id="color-pastel-orange" class="color-circle bg-[#FFEDD5]"></div>
-                            <div onclick="setThemeColor('pastel-purple')" id="color-pastel-purple" class="color-circle bg-[#F3E8FF]"></div>
-                            <div onclick="document.getElementById('custom-color-input').click()" id="color-custom" class="color-circle bg-white text-slate-400">
-                                <i data-lucide="plus" class="w-5 h-5"></i>
+                    <!-- 배경 테마 색상 설정 -->
+                    <div class="lg:col-span-3 space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <h4 class="font-bold text-base flex items-center gap-2 text-slate-700"><i data-lucide="palette" class="w-5 h-5"></i> 배경 테마 색상</h4>
+                        <div class="grid grid-cols-5 gap-y-3 gap-x-2 justify-items-center py-1">
+                            <div onclick="setThemeColor('default')" id="color-default" class="color-circle bg-[#FDFCFB]" title="기본"></div>
+                            <div onclick="setThemeColor('pastel-blue')" id="color-pastel-blue" class="color-circle bg-[#E0F2FE]" title="블루"></div>
+                            <div onclick="setThemeColor('pastel-indigo')" id="color-pastel-indigo" class="color-circle bg-[#E0E7FF]" title="인디고"></div>
+                            <div onclick="setThemeColor('pastel-green')" id="color-pastel-green" class="color-circle bg-[#DCFCE7]" title="그린"></div>
+                            <div onclick="setThemeColor('pastel-emerald')" id="color-pastel-emerald" class="color-circle bg-[#D1FAE5]" title="에메랄드"></div>
+                            <div onclick="setThemeColor('pastel-teal')" id="color-pastel-teal" class="color-circle bg-[#CCFBF1]" title="티알"></div>
+                            <div onclick="setThemeColor('pastel-cyan')" id="color-pastel-cyan" class="color-circle bg-[#CFFAFE]" title="시안"></div>
+                            <div onclick="setThemeColor('pastel-yellow')" id="color-pastel-yellow" class="color-circle bg-[#FEF9C3]" title="옐로우"></div>
+                            <div onclick="setThemeColor('pastel-amber')" id="color-pastel-amber" class="color-circle bg-[#FEF3C7]" title="앰버"></div>
+                            <div onclick="setThemeColor('pastel-orange')" id="color-pastel-orange" class="color-circle bg-[#FFEDD5]" title="오렌지"></div>
+                            <div onclick="setThemeColor('pastel-pink')" id="color-pastel-pink" class="color-circle bg-[#FCE7F3]" title="핑크"></div>
+                            <div onclick="setThemeColor('pastel-rose')" id="color-pastel-rose" class="color-circle bg-[#FFE4E6]" title="로즈"></div>
+                            <div onclick="setThemeColor('pastel-purple')" id="color-pastel-purple" class="color-circle bg-[#F3E8FF]" title="퍼플"></div>
+                            <div onclick="setThemeColor('pastel-slate')" id="color-pastel-slate" class="color-circle bg-[#F1F5F9]" title="슬레이트"></div>
+                            <div onclick="document.getElementById('custom-color-input').click()" id="color-custom" class="color-circle bg-white text-slate-400" title="직접 선택">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
                             </div>
                             <input type="color" id="custom-color-input" class="hidden" oninput="handleCustomColor(this.value)">
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-3 bg-blue-50 p-4 md:p-5 rounded-2xl border border-blue-100">
-                    <h4 class="font-bold text-lg flex items-center gap-2 text-blue-700"><i data-lucide="utensils" class="w-5 h-5"></i> 급식 학교 설정</h4>
+                <div class="space-y-3 bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                    <h4 class="font-bold text-base flex items-center gap-2 text-blue-700"><i data-lucide="utensils" class="w-5 h-5"></i> 급식 학교 설정</h4>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <select id="region-select" class="p-2.5 border rounded-xl font-bold text-sm outline-none sm:w-32 bg-white">
+                        <select id="region-select" class="p-2 border rounded-xl font-bold text-sm outline-none sm:w-32 bg-white">
                             <option value="B10">서울</option><option value="C10">부산</option><option value="D10">대구</option>
                             <option value="E10">인천</option><option value="F10">광주</option><option value="G10">대전</option>
                             <option value="H10">울산</option><option value="I10">세종</option><option value="J10" selected>경기</option>
@@ -316,58 +343,61 @@
                             <option value="S10">경남</option><option value="T10">제주</option>
                         </select>
                         <div class="relative flex-1">
-                            <input type="text" id="school-name-search" placeholder="학교 이름 입력" class="w-full p-2.5 border rounded-xl font-bold text-sm outline-none bg-white">
-                            <button onclick="searchSchoolInSettings()" class="absolute right-1.5 top-1.5 bg-blue-600 text-white px-3 py-1 rounded-lg font-bold text-xs">검색</button>
+                            <input type="text" id="school-name-search" placeholder="학교 이름 입력" class="w-full p-2 border rounded-xl font-bold text-sm outline-none bg-white">
+                            <button onclick="searchSchoolInSettings()" class="absolute right-1.5 top-1.5 bg-blue-600 text-white px-3 py-1 rounded-lg font-bold text-[10px]">검색</button>
                         </div>
                     </div>
-                    <div id="school-search-results" class="space-y-1.5 mt-2 max-h-32 overflow-y-auto custom-scrollbar"></div>
+                    <div id="school-search-results" class="space-y-1 mt-2 max-h-32 overflow-y-auto custom-scrollbar"></div>
                     <div id="selected-school-info" class="text-xs font-bold text-blue-600 mt-1"></div>
                 </div>
 
                 <div class="space-y-4">
                     <div class="flex justify-between items-center px-1">
-                        <h4 class="font-bold text-lg flex items-center gap-2 text-slate-700"><i data-lucide="calendar-check" class="w-5 h-5"></i> D-Day</h4>
-                        <button onclick="addRow('dday-editor')" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold border border-blue-100">+ 추가</button>
+                        <h4 class="font-bold text-base flex items-center gap-2 text-slate-700"><i data-lucide="calendar-check" class="w-5 h-5"></i> D-Day</h4>
+                        <button onclick="addRow('dday-editor')" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-bold border border-blue-100">+ 추가</button>
                     </div>
                     <div id="dday-editor" class="space-y-2"></div>
                 </div>
 
-                <div class="space-y-4 bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200">
-                    <h4 class="font-bold text-lg flex items-center gap-2 text-slate-700"><i data-lucide="layout-list" class="w-5 h-5"></i> 요일별 수업 시수</h4>
+                <div class="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base flex items-center gap-2 text-slate-700"><i data-lucide="layout-list" class="w-5 h-5"></i> 요일별 수업 시수</h4>
                     <div class="grid grid-cols-5 gap-2">
-                        <div class="text-center"><span class="text-[10px] font-bold text-slate-400">월</span><select id="period-mon" class="w-full p-2 border rounded-xl text-sm font-black text-center bg-white"></select></div>
-                        <div class="text-center"><span class="text-[10px] font-bold text-slate-400">화</span><select id="period-tue" class="w-full p-2 border rounded-xl text-sm font-black text-center bg-white"></select></div>
-                        <div class="text-center"><span class="text-[10px] font-bold text-slate-400">수</span><select id="period-wed" class="w-full p-2 border rounded-xl text-sm font-black text-center bg-white"></select></div>
-                        <div class="text-center"><span class="text-[10px] font-bold text-slate-400">목</span><select id="period-thu" class="w-full p-2 border rounded-xl text-sm font-black text-center bg-white"></select></div>
-                        <div class="text-center"><span class="text-[10px] font-bold text-slate-400">금</span><select id="period-fri" class="w-full p-2 border rounded-xl text-sm font-black text-center bg-white"></select></div>
+                        <div class="text-center"><span class="text-[9px] font-bold text-slate-400">월</span><select id="period-mon" class="w-full p-1.5 border rounded-xl text-xs font-black text-center bg-white"></select></div>
+                        <div class="text-center"><span class="text-[9px] font-bold text-slate-400">화</span><select id="period-tue" class="w-full p-1.5 border rounded-xl text-xs font-black text-center bg-white"></select></div>
+                        <div class="text-center"><span class="text-[9px] font-bold text-slate-400">수</span><select id="period-wed" class="w-full p-1.5 border rounded-xl text-xs font-black text-center bg-white"></select></div>
+                        <div class="text-center"><span class="text-[9px] font-bold text-slate-400">목</span><select id="period-thu" class="w-full p-1.5 border rounded-xl text-xs font-black text-center bg-white"></select></div>
+                        <div class="text-center"><span class="text-[9px] font-bold text-slate-400">금</span><select id="period-fri" class="w-full p-1.5 border rounded-xl text-xs font-black text-center bg-white"></select></div>
                     </div>
                 </div>
 
-                <div class="space-y-4 bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200">
-                    <h4 class="font-bold text-lg flex items-center gap-2 text-slate-700"><i data-lucide="clock" class="w-5 h-5"></i> 시정표 기준</h4>
+                <div class="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base flex items-center gap-2 text-slate-700"><i data-lucide="clock" class="w-5 h-5"></i> 시정표 기준</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1">
-                            <label class="text-[11px] font-bold text-slate-500">1교시 시작</label>
-                            <input type="time" id="start-time-trigger" class="w-full p-2.5 border rounded-xl text-lg font-black bg-white" onchange="autoCalculateSchedule(this.value, document.getElementById('lunch-after-input').value)">
+                            <label class="text-[10px] font-bold text-slate-500">1교시 시작</label>
+                            <input type="time" id="start-time-trigger" class="w-full p-2 border rounded-xl text-base font-black bg-white" onchange="autoCalculateSchedule(this.value, document.getElementById('lunch-after-input').value)">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-[11px] font-bold text-slate-500">점심시간</label>
-                            <select id="lunch-after-input" class="w-full p-2.5 border rounded-xl text-lg font-black bg-white" onchange="autoCalculateSchedule(document.getElementById('start-time-trigger').value, this.value)">
-                                <option value="1">1교시 후</option><option value="2">2교시 후</option>
-                                <option value="3">3교시 후</option><option value="4" selected>4교시 후</option>
+                            <label class="text-[10px] font-bold text-slate-500">점심시간</label>
+                            <select id="lunch-after-input" class="w-full p-2 border rounded-xl text-base font-black bg-white" onchange="autoCalculateSchedule(document.getElementById('start-time-trigger').value, this.value)">
+                                <option value="1">1교시 후 점심</option>
+                                <option value="2">2교시 후 점심</option>
+                                <option value="3">3교시 후 점심</option>
+                                <option value="4" selected>4교시 후 점심</option>
+                                <option value="5">5교시 후 점심</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-3">
-                    <h4 class="font-bold text-lg text-slate-700 px-1">시정표 확인/수정</h4>
+                    <h4 class="font-bold text-base text-slate-700 px-1">시정표 확인/수정</h4>
                     <div id="schedule-editor" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-800"></div>
                 </div>
 
                 <div class="mt-6 border-t pt-6 text-center">
-                    <button onclick="saveSettings()" class="w-full py-4 bg-orange-500 text-white rounded-2xl font-black text-xl shadow-xl hover:bg-orange-600 transition-all">설정 저장 및 적용</button>
-                    <p class="mt-4 opacity-20 text-[10px]">Happy Class V3.51 Dashboard</p>
+                    <button onclick="saveSettings()" class="w-full py-4 bg-orange-500 text-white rounded-2xl font-black text-lg shadow-xl hover:bg-orange-600 transition-all">설정 저장 및 적용</button>
+                    <p class="mt-4 opacity-20 text-[10px]">Happy Class V3.56 Dashboard</p>
                 </div>
             </div>
         </div>
@@ -383,7 +413,7 @@
         let config = {
             viewMode: 'rules',
             notices: {},
-            themeColor: 'pastel-indigo', 
+            themeColor: 'pastel-indigo',
             customColor: '#ffffff',
             lunchAfter: 4,
             schoolInfo: null,
@@ -406,16 +436,18 @@
         const THEMES = {
             'default': 'linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)',
             'pastel-blue': '#E0F2FE', 'pastel-indigo': '#E0E7FF', 'pastel-green': '#DCFCE7',
-            'pastel-emerald': '#D1FAE5', 'pastel-teal': '#CCFBF1', 'pastel-pink': '#FCE7F3',
-            'pastel-rose': '#FFE4E6', 'pastel-orange': '#FFEDD5', 'pastel-yellow': '#FEF9C3',
-            'pastel-purple': '#F3E8FF', 'custom': '' 
+            'pastel-emerald': '#D1FAE5', 'pastel-teal': '#CCFBF1', 'pastel-cyan': '#CFFAFE',
+            'pastel-yellow': '#FEF9C3', 'pastel-amber': '#FEF3C7', 'pastel-orange': '#FFEDD5',
+            'pastel-pink': '#FCE7F3', 'pastel-rose': '#FFE4E6', 'pastel-purple': '#F3E8FF',
+            'pastel-slate': '#F1F5F9', 'custom': '' 
         };
 
         const ACCENTS = {
             'default': '#f97316', 'pastel-blue': '#0284c7', 'pastel-indigo': '#6366f1',
             'pastel-green': '#16a34a', 'pastel-emerald': '#059669', 'pastel-teal': '#0d9488',
-            'pastel-pink': '#db2777', 'pastel-rose': '#e11d48', 'pastel-orange': '#ea580c',
-            'pastel-yellow': '#ca8a04', 'pastel-purple': '#9333ea', 'custom': '#f97316'
+            'pastel-cyan': '#0891b2', 'pastel-yellow': '#ca8a04', 'pastel-amber': '#d97706',
+            'pastel-orange': '#ea580c', 'pastel-pink': '#db2777', 'pastel-rose': '#e11d48',
+            'pastel-purple': '#9333ea', 'pastel-slate': '#475569', 'custom': '#f97316'
         };
 
         let mealDate = new Date();
@@ -426,11 +458,11 @@
         let musicPlaylist = [];
         let currentMusicIdx = 0;
 
-        const saved = localStorage.getItem('happy_class_config_v3_51');
+        const saved = localStorage.getItem('happy_class_config_v3_55');
         if (saved) {
             config = { ...config, ...JSON.parse(saved) };
         } else {
-            const oldSaved = localStorage.getItem('happy_class_config_v3_50') || localStorage.getItem('happy_class_config_v3_44');
+            const oldSaved = localStorage.getItem('happy_class_config_v3_54') || localStorage.getItem('happy_class_config_v3_51');
             if (oldSaved) config = { ...config, ...JSON.parse(oldSaved) };
         }
         
@@ -462,7 +494,7 @@
             const c = config.titleConfig;
             titleEl.innerText = c.text || 'Happy Class';
             titleEl.style.fontFamily = c.font || '"Pretendard Variable", Pretendard';
-            const sizeClasses = ['text-4xl', 'text-5xl', 'text-6xl', 'text-7xl', 'text-8xl', 'text-9xl'];
+            const sizeClasses = ['text-3xl', 'text-4xl', 'text-5xl', 'text-6xl', 'text-7xl', 'text-8xl'];
             titleEl.classList.remove(...sizeClasses);
             titleEl.classList.add(`text-${c.size || '6xl'}`);
             if (c.syncWithTheme) {
@@ -522,8 +554,8 @@
             if (badge) {
                 badge.innerText = status;
                 badge.className = (status === "주말" || status === "공휴일") 
-                    ? "glass inline-block px-8 py-3 lg:py-4 rounded-3xl text-xl lg:text-3xl font-black shadow-xl border-white/50 text-red-500 mb-2"
-                    : `glass inline-block px-8 py-3 lg:py-4 rounded-3xl text-xl lg:text-3xl font-black shadow-xl border-white/50 mb-2 ${status.includes('교시') ? 'dynamic-accent-text' : 'text-blue-600'}`;
+                    ? "glass inline-block px-5 lg:px-8 py-2 lg:py-4 rounded-2xl lg:rounded-3xl text-lg lg:text-3xl font-black shadow-xl border-white/50 text-red-500 mb-2"
+                    : `glass inline-block px-5 lg:px-8 py-2 lg:py-4 rounded-2xl lg:rounded-3xl text-lg lg:text-3xl font-black shadow-xl border-white/50 mb-2 ${status.includes('교시') ? 'dynamic-accent-text' : 'text-blue-600'}`;
             }
         }
 
@@ -539,7 +571,7 @@
                 const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
                 if (days >= 0) {
                     const el = document.createElement('div');
-                    el.className = "bg-white/60 backdrop-blur-sm px-3 lg:px-4 py-1.5 lg:py-2 rounded-2xl border border-white/40 shadow-sm text-sm lg:text-lg font-bold text-slate-700";
+                    el.className = "bg-white/60 backdrop-blur-sm px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl lg:rounded-2xl border border-white/40 shadow-sm text-xs lg:text-lg font-bold text-slate-700";
                     el.innerText = days === 0 ? `${item.text} 🎈` : `${item.text} D-${days}`;
                     container.appendChild(el);
                 }
@@ -627,8 +659,6 @@
             lucide.createIcons();
         }
 
-        function setVolume(val) { audioBgm.volume = val; }
-
         function setThemeColor(themeKey) {
             config.themeColor = themeKey;
             applyBackground(); applyTitleConfig(); updateColorSelectionUI(); renderContent(); saveToLocal();
@@ -686,8 +716,8 @@
                 const btn = document.getElementById(`btn-view-${m}`);
                 if(btn) {
                     btn.className = (config.viewMode === m) 
-                        ? "flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-black transition-all text-xs lg:text-sm dynamic-accent-bg text-white shadow-lg" 
-                        : "flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-bold transition-all text-xs lg:text-sm opacity-60 hover:opacity-100";
+                        ? "flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-black transition-all text-[11px] lg:text-sm dynamic-accent-bg text-white shadow-lg" 
+                        : "flex-1 md:flex-none px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl font-bold transition-all text-[11px] lg:text-sm opacity-60 hover:opacity-100";
                 }
             });
 
@@ -705,29 +735,29 @@
                 container.innerHTML = `<div class="flex justify-center items-center h-full"><div class="loader"></div></div>`;
                 const data = await getMealData();
                 const formattedDate = `${mealDate.getFullYear()}.${String(mealDate.getMonth()+1).padStart(2,'0')}.${String(mealDate.getDate()).padStart(2,'0')} (${dayNames[mealDate.getDay()]})`;
-                let mealHtml = `<div class="glass p-4 lg:p-8 rounded-[2rem] shadow-xl h-full flex flex-col border-white/50 fade-in-up">
+                let mealHtml = `<div class="glass p-5 lg:p-8 rounded-[1.5rem] lg:rounded-[2rem] shadow-xl h-full flex flex-col border-white/50 fade-in-up">
                     <div class="flex items-center justify-between mb-4 lg:mb-8">
                         <button onclick="changeMealDate(-1)" class="p-2 hover:bg-white/30 rounded-full"><i data-lucide="chevron-left"></i></button>
-                        <span class="text-lg lg:text-2xl font-black">${formattedDate}</span>
+                        <span class="text-base lg:text-2xl font-black">${formattedDate}</span>
                         <button onclick="changeMealDate(1)" class="p-2 hover:bg-white/30 rounded-full"><i data-lucide="chevron-right"></i></button>
                     </div>`;
                 if (data) {
                     const menus = data.DDISH_NM.split('<br/>').map(m => m.replace(/\([0-9.]+\)/g, '').trim());
-                    mealHtml += `<div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        ${menus.map(m => `<div class="p-3 lg:p-4 bg-white/40 rounded-xl font-bold text-base lg:text-xl">${m}</div>`).join('')}
-                    </div><div class="mt-4 text-right dynamic-accent-text font-bold text-sm lg:text-base">${data.CAL_INFO}</div>`;
+                    mealHtml += `<div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 lg:gap-3">
+                        ${menus.map(m => `<div class="p-2.5 lg:p-4 bg-white/40 rounded-xl font-bold text-sm lg:text-xl">${m}</div>`).join('')}
+                    </div><div class="mt-4 text-right dynamic-accent-text font-bold text-xs lg:text-base">${data.CAL_INFO}</div>`;
                 } else {
-                    mealHtml += `<div class="flex-1 flex items-center justify-center opacity-40"><p class="text-lg font-bold">식단 정보 없음</p></div>`;
+                    mealHtml += `<div class="flex-1 flex items-center justify-center opacity-40 py-10"><p class="text-lg font-bold">식단 정보 없음</p></div>`;
                 }
                 mealHtml += `</div>`; container.innerHTML = mealHtml;
             } else if (config.viewMode === 'notice') {
                 titleEl.innerText = "알림장"; 
                 const ymdKey = noticeDate.toISOString().split('T')[0];
                 const formattedDate = `${noticeDate.getFullYear()}.${String(noticeDate.getMonth()+1).padStart(2,'0')}.${String(noticeDate.getDate()).padStart(2,'0')} (${dayNames[noticeDate.getDay()]})`;
-                container.innerHTML = `<div class="glass p-4 lg:p-8 rounded-[2rem] shadow-xl h-full flex flex-col border-white/50 fade-in-up">
+                container.innerHTML = `<div class="glass p-5 lg:p-8 rounded-[1.5rem] lg:rounded-[2rem] shadow-xl h-full flex flex-col border-white/50 fade-in-up">
                     <div class="flex items-center justify-between mb-4">
                         <button onclick="changeNoticeDate(-1)" class="p-2 hover:bg-white/30 rounded-full"><i data-lucide="chevron-left"></i></button>
-                        <span class="text-lg lg:text-2xl font-black">${formattedDate}</span>
+                        <span class="text-base lg:text-2xl font-black">${formattedDate}</span>
                         <button onclick="changeNoticeDate(1)" class="p-2 hover:bg-white/30 rounded-full"><i data-lucide="chevron-right"></i></button>
                     </div><textarea id="notice-textarea" oninput="saveNoticeForDate(this.value)" placeholder="알림장 내용을 입력하세요">${config.notices[ymdKey] || ''}</textarea></div>`;
             } else {
@@ -735,16 +765,16 @@
                 titleEl.innerText = type === 'rules' ? "우리 반 약속" : "공지사항"; 
                 let html = `<div class="space-y-3 lg:space-y-4 fade-in-up">`;
                 config[type].forEach((item, idx) => {
-                    html += `<div class="glass p-4 lg:p-6 rounded-[1.5rem] flex items-center gap-4 lg:gap-6 group">
-                        <span class="text-2xl lg:text-4xl font-black opacity-10">${String(idx + 1).padStart(2, '0')}</span>
+                    html += `<div class="glass p-4 lg:p-6 rounded-[1.25rem] lg:rounded-[1.5rem] flex items-center gap-4 lg:gap-6 group">
+                        <span class="text-xl lg:text-4xl font-black opacity-10">${String(idx + 1).padStart(2, '0')}</span>
                         <div class="flex-1">
-                            <input type="text" value="${item.title}" oninput="config['${type}'][${idx}].title = this.value; saveToLocal();" class="editable-input text-lg lg:text-2xl font-black" placeholder="제목">
-                            <input type="text" value="${item.desc}" oninput="config['${type}'][${idx}].desc = this.value; saveToLocal();" class="editable-input text-sm lg:text-lg font-bold opacity-70" placeholder="내용">
+                            <input type="text" value="${item.title}" oninput="config['${type}'][${idx}].title = this.value; saveToLocal();" class="editable-input text-base lg:text-2xl font-black" placeholder="제목">
+                            <input type="text" value="${item.desc}" oninput="config['${type}'][${idx}].desc = this.value; saveToLocal();" class="editable-input text-xs lg:text-lg font-bold opacity-70" placeholder="내용">
                         </div>
-                        <button onclick="config['${type}'].splice(${idx}, 1); renderContent(); saveToLocal();" class="p-2 text-red-400 opacity-40 group-hover:opacity-100"><i data-lucide="trash-2"></i></button>
+                        <button onclick="config['${type}'].splice(${idx}, 1); renderContent(); saveToLocal();" class="p-2 text-red-400 opacity-40 group-hover:opacity-100"><i data-lucide="trash-2" class="w-4 h-4 lg:w-5 lg:h-5"></i></button>
                     </div>`;
                 });
-                html += `<button onclick="config['${type}'].push({title:'', desc:''}); renderContent(); saveToLocal();" class="w-full py-4 lg:py-5 border-2 lg:border-4 border-dashed border-white/40 rounded-[1.5rem] text-slate-400 font-black hover:bg-white/20">+ 추가하기</button></div>`;
+                html += `<button onclick="config['${type}'].push({title:'', desc:''}); renderContent(); saveToLocal();" class="w-full py-3 lg:py-5 border-2 lg:border-4 border-dashed border-white/40 rounded-[1.5rem] text-slate-400 font-black hover:bg-white/20 text-sm lg:text-base">+ 추가하기</button></div>`;
                 container.innerHTML = html;
             }
             lucide.createIcons();
@@ -768,9 +798,9 @@
                 const d = await fetchNEIS('schoolInfo', { ATPT_OFCDC_SC_CODE:r, SCHUL_NM:n });
                 if(d.schoolInfo) {
                     res.innerHTML = d.schoolInfo[1].row.map(s => `
-                        <button onclick="selectSchool('${s.ATPT_OFCDC_SC_CODE}', '${s.SD_SCHUL_CODE}', '${s.SCHUL_NM}')" class="w-full text-left p-2.5 border rounded-xl hover:bg-blue-50">
+                        <button onclick="selectSchool('${s.ATPT_OFCDC_SC_CODE}', '${s.SD_SCHUL_CODE}', '${s.SCHUL_NM}')" class="w-full text-left p-2 border rounded-xl hover:bg-blue-50">
                             <div class="text-xs font-bold text-slate-800">${s.SCHUL_NM}</div>
-                            <div class="text-[10px] text-slate-400 mt-0.5">${s.ORG_RDNMA || '주소 정보 없음'}</div>
+                            <div class="text-[9px] text-slate-400 mt-0.5">${s.ORG_RDNMA || '주소 정보 없음'}</div>
                         </button>`).join('');
                 } else res.innerHTML = '<div class="text-xs p-2">결과 없음</div>';
             } catch(e){ res.innerHTML = '<div class="text-xs p-2 text-red-500">오류 발생</div>'; }
@@ -791,7 +821,7 @@
 
         function renderScheduleEditor(schArray) {
             const ed = document.getElementById('schedule-editor'); if(!ed) return;
-            ed.innerHTML = schArray.map(s => `<div class="flex flex-col gap-1.5 border p-3 rounded-xl bg-white schedule-item-row"><span class="font-bold text-[10px] text-slate-400 uppercase sch-name">${s.name}</span><div class="flex items-center gap-1.5"><input type="text" value="${s.start}" class="sch-start-in w-full p-1.5 border rounded-lg text-sm font-black text-center"><span>~</span><input type="text" value="${s.end}" class="sch-end-in w-full p-1.5 border rounded-lg text-sm font-black text-center"></div></div>`).join('');
+            ed.innerHTML = schArray.map(s => `<div class="flex flex-col gap-1 border p-2.5 rounded-xl bg-white schedule-item-row"><span class="font-bold text-[9px] text-slate-400 uppercase sch-name">${s.name}</span><div class="flex items-center gap-1"><input type="text" value="${s.start}" class="sch-start-in w-full p-1 border rounded-lg text-xs font-black text-center"><span>~</span><input type="text" value="${s.end}" class="sch-end-in w-full p-1 border rounded-lg text-xs font-black text-center"></div></div>`).join('');
         }
 
         function autoCalculateSchedule(st, la) { renderScheduleEditor(generateDefaultSchedule(st || "09:00", parseInt(la))); }
@@ -837,7 +867,7 @@
             closeSettings(); showAutoSaveIndicator();
         }
 
-        function saveToLocal() { localStorage.setItem('happy_class_config_v3_51', JSON.stringify(config)); }
+        function saveToLocal() { localStorage.setItem('happy_class_config_v3_55', JSON.stringify(config)); }
         function showAutoSaveIndicator() { const i = document.getElementById('auto-save-indicator'); if(i) { i.style.opacity = '1'; setTimeout(() => { i.style.opacity = '0'; }, 1000); } }
 
         function renderPeriodSelectors() {
@@ -850,7 +880,7 @@
 
         function addRow(id, t="", d="") {
             const e = document.getElementById(id); const r = document.createElement('div'); r.className = "flex gap-2 items-center dday-row";
-            r.innerHTML = `<input type="text" value="${t}" class="dday-title-in flex-1 p-2.5 border rounded-xl text-sm font-bold bg-white" placeholder="일정 이름"><input type="date" value="${d}" class="dday-date-in p-2.5 border rounded-xl text-sm font-bold bg-white"><button onclick="this.parentElement.remove()" class="p-2 text-red-400"><i data-lucide="trash-2" class="w-5 h-5"></i></button>`;
+            r.innerHTML = `<input type="text" value="${t}" class="dday-title-in flex-1 p-2 border rounded-xl text-xs font-bold bg-white" placeholder="이름"><input type="date" value="${d}" class="dday-date-in p-2 border rounded-xl text-xs font-bold bg-white"><button onclick="this.parentElement.remove()" class="p-1.5 text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
             e.appendChild(r); lucide.createIcons();
         }
 
